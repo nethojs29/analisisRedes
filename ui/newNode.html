@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Añadir un nodo</title>
+  </head>
+  <body>
+    <form id="form">
+      Nodo a insertar:<br>
+      <input type="text" name="nodo">
+    </form>
+    <button type="button" onclick="agregarNodo()">Aceptar</button>
+
+  <script>
+    const {ipcRenderer} = require("electron");
+    function agregarNodo(){
+      var x = document.getElementById("form");
+      newNodo = x.elements[0].value;
+      console.log(newNodo);
+      ipcRenderer.send("newNodo", newNodo);
+    }
+  </script>
+  </body>
+</html>

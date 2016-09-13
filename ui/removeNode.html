@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Remover un nodo</title>
+  </head>
+  <body>
+
+  <script>
+    const {ipcRenderer} = require("electron");
+    var grafo;
+    ipcRenderer.on('tomaGrafo', (event, arg) => {
+      grafo = arg
+      //console.log(arg)
+
+      for (var i = 0; i < grafo.vertices.length; i++) {
+
+        var btn = document.createElement("BUTTON");
+        btn.id = grafo.vertices[i].label;
+        var t = document.createTextNode(grafo.vertices[i].label);
+        btn.appendChild(t);
+        btn.onclick = function(){
+          console.log(this.id);
+          ipcRenderer.send("deleteNode", this.id);
+        }
+        document.body.appendChild(btn);
+      }
+    })
+
+    ipcRenderer.send("dameGrafo", "");
+
+    function agregarNodo(){
+
+    }
+  </script>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+{
+    "grafo": {
+        "vertices": [
+            {
+                "etiqueta": "A",
+                "aristas": [1,2]
+            },
+            {
+                "etiqueta": "B",
+                "aristas": [0]
+            },
+            {
+              "etiqueta": "C",
+              "aristas": [0]
+            }
+        ]
+      }
+}

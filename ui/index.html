@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Analisis de Redes</title>
+    <script src="../node_modules/vis/dist/vis.js"></script>
+    <link href="../node_modules/vis/dist/vis.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+    #graph {
+      width: 100%;
+      height: 450px;
+      border: 1px solid lightgray;
+    }
+  </style>
+  </head>
+  <body>
+    <div>
+      <button type="button" onclick="createNewNodeWindow()">Agregar Nodo</button>
+      <button type="button" onclick="createRemoveNodeWindow()">Remover Nodo</button>
+      <button type="button" onclick="createRemoveEdgeWindow()">Remover Arista</button>
+      <br><button type="button" onclick="askGrafo()">Cargar grafo</button>
+    </div>
+    <div id="graph"></div>
+    <button type="button" onclick="reqPCE()">Paseo Cerrado Euler</button>
+    <button type="button" onclick="reqDFS()">DFS</button>
+    <button type="button" onclick="reqBFS()">BFS</button>
+    <script src="../util.js"></script>
+    <script src="../lib/Grafo.js"></script>
+    <script src="../lib/Heap.js"></script>
+    <script type="text/javascript">
+      var _ = require('underscore');
+      function minimo(other){return this.value.costo < other.value.costo};
+
+      var vertices = [], aristas = []
+      var nodes, edges
+      var network
+
+      var grafo = new lib.Grafo();
+      grafo.agregarArista("A", "B", 5)
+      grafo.agregarArista("A", "C", 7)
+      grafo.agregarArista("A", "D", 8)
+      grafo.agregarArista("B", "C", 4)
+      grafo.agregarArista("D", "E", 5)
+      grafo.agregarArista("E", "C", 6)
+      grafo.agregarArista("E", "B", 2)
+      grafo.agregarArista("E", "A", 3)
+      //grafo.agregarArista("G", "H", 1)
+
+      visual(grafo)
+
+      prim(grafo)
+
+      function prim(grafo) {
+        var arbol = new lib.Grafo()
+        arbol.agregarNodo(grafo.vertices[0].label)
+        var edge;
+        while (true) {
+          edge = getMinEdge(arbol, grafo)
+          if(edge){
+            arbol.agregarArista(edge.inicio, edge.destino, edge.costo)
+            edges.update({id: edge.inicio+"-"+edge.destino, color: '#FF0000'})
+            edges.update({id: edge.destino+"-"+edge.inicio, color: '#FF0000'})
+            if(arbol.vertices.length == grafo.vertices.length){
+              break
+            }
+          }else {
+            alert("rippp")
+            break
+          }
+        }
+        console.log(arbol);
+
+
+      }
+
+      function getMinEdge(arbol, grafo) {
+        var edge = {"costo":9999}
+        for (var i = 0; i < grafo.aristas.length; i++) {
+          if(arbol.indiceDeNodo(grafo.aristas[i].inicio) != -1 ?
+             arbol.indiceDeNodo(grafo.aristas[i].destino) == -1 :
+             arbol.indiceDeNodo(grafo.aristas[i].destino) != -1){
+               if(grafo.aristas[i].costo < edge.costo){
+                 edge = grafo.aristas[i]
+               }
+          }
+        }
+        return edge.costo == 9999 ? null : edge
+      }
+
+      function visual(arg) {
+        if(network){
+          network.destroy()
+          network = null
+        }
+        var grafo = arg
+
+        prepareGraph(grafo)
+
+        nodes = new vis.DataSet(vertices);
+        // create an array with edges
+        edges = new vis.DataSet(aristas);
+        // create a network
+        var container = document.getElementById('graph');
+        var data = {
+          nodes: nodes,
+          edges: edges
+        };
+        var options = {};
+        network = new vis.Network(container, data, options);
+
+      }
+
+      function prepareGraph(grafo) {
+        for (var i = 0; i < grafo.vertices.length; i++) {
+          vertices.push({id: grafo.vertices[i].label, label: grafo.vertices[i].label})
+          for (var j = 0; j < grafo.vertices[i].aristas.length; j++) {
+            if(!aristaPresente(grafo.vertices[i].aristas[j].destino+"-"+grafo.vertices[i].label))
+              aristas.push({label: grafo.vertices[i].aristas[j].costo,id: grafo.vertices[i].label+"-"+grafo.vertices[i].aristas[j].destino,from: grafo.vertices[i].label, to: grafo.vertices[i].aristas[j].destino})
+          }
+        }
+      }
+
+      function aristaPresente(id) {
+        for (var i = 0; i < aristas.length; i++) {
+          if(aristas[i].id == id){
+            return true
+          }
+        }
+        return false
+      }
+
+    </script>
+  </body>
+</html>
